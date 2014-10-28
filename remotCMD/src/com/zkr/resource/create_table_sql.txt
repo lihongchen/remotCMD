@@ -1,0 +1,108 @@
+--- 创建机器信息表
+create table rmc_client_msg(
+ id nvarchar2(50) primary key ,
+ m_user nvarchar2(50),
+ m_pwd nvarchar2(50),
+ m_ip nvarchar2(50),
+ m_proLocat nvarchar2(200)
+);
+comment on table rmc_client_msg
+  is '客户端机器信息表'; 
+ 
+comment on column rmc_client_msg.id
+  is '机器id';
+  
+  
+comment on column rmc_client_msg.m_user
+  is '机器登陆用户名';
+  
+comment on column rmc_client_msg.m_pwd
+  is '机器密码';
+  
+comment on column rmc_client_msg.m_ip
+  is '机器ip'; 
+comment on column rmc_client_msg.m_proLocat
+  is '项目所在的目录'; 
+  
+    
+--- 执行任务信息表
+create table rmc_cmdinfo(
+id nvarchar2(50) primary key not null,
+username nvarchar2(100) ,
+createdate date ,
+execdate date,
+exectype nvarchar2(4),
+rem_mip  nvarchar2(16),
+sqlarea  nvarchar2(10),
+dmlorddl nvarchar2(4),
+cmdorsql nvarchar2(1000),
+status nvarchar2(4),
+remark nvarchar2(200)
+);
+
+comment on table rmc_cmdinfo
+  is '执行任务信息表'; 
+  
+comment on column rmc_cmdinfo.username
+  is '创建这条任务用户名';
+  
+comment on column rmc_cmdinfo.createdate
+  is '创建这条任务时间';
+  
+comment on column rmc_cmdinfo.execdate
+  is '执行这条任务的时间';
+  
+comment on column rmc_cmdinfo.exectype
+  is '执行命令类型    2001 sql 语句 2002 cmd 命令   2003 bat命令 ';
+    
+comment on column rmc_cmdinfo.rem_mip
+  is '要执行这条任务机器的ip地址';
+  
+comment on column rmc_cmdinfo.sqlarea
+  is '执行sql地区 北京数据库： bjdb；江苏数据库 jsdb ； 上好数据库 shdb； 江西数据库 jxdb;';
+  
+  
+comment on column rmc_cmdinfo.dmlorddl
+  is '执行sql语句为dml（DML） 操作 ，ddl（DDL）操作 ';
+    
+comment on column rmc_cmdinfo.cmdorsql
+  is '要执行的cmd命令，或者 sql 语句';
+  
+comment on column rmc_cmdinfo.status
+  is '这条任务执行的状态，1000 未执行，1001 执行成功，1002 执行失败';
+  
+comment on column rmc_cmdinfo.remark
+  is '备注';
+  
+  
+--- 执行任务结果信息表  
+create table rmc_cmdinfo_result(
+id nvarchar2(50) primary key not null,
+fid nvarchar2(50) ,
+filename nvarchar2(200),
+textorfile blob
+);
+
+comment on table rmc_cmdinfo_result
+  is '执行任务结果信息表'; 
+comment on column rmc_cmdinfo.id
+  is 'id';
+comment on column rmc_cmdinfo_result.fid
+  is '任务id';
+comment on column rmc_cmdinfo_result.filename
+  is '文件名称';  
+comment on column rmc_cmdinfo_result.textorfile
+  is '执行结果';
+  
+  
+  
+  
+--- 查询字段内外网不一致表
+ CREATE TABLE TABLES 
+   (	TABLE_NAME NVARCHAR2(100), 
+	COLUMN_NAME NVARCHAR2(100), 
+	DATA_TYPE NVARCHAR2(100), 
+	DATA_LENGTH NVARCHAR2(100), 
+	NULLABLE NVARCHAR2(100)
+   ) 
+ 

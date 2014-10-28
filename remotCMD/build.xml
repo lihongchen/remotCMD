@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- build 文件功能 
+1、将项目 打包成一个jar包
+2、生成 @set classpath=%classpath%;lib\commons-net-3.0.1.jar; run.sh/bat
+3、将项目打包成可执行命令结构 config lib  ***.bat
+ -->
+ 
+<project name="remotCMD" default="run" basedir=".">
+	<property name="build" value="build"/>
+	<property name="dest" value="remotCMD"/>
+	<property name="conf" value="conf"/>
+	<property name="remotCMDJAR" value="remotCMD.jar"/>
+	<property name="lib" value="lib"/>
+	
+	
+	<!-- 初始化 环境   检查是否存在 YZDService 目录和YZDService.war 文件如果存在就先删除，再创建 YZDService 目录    -->
+	 
+	<path id="classpath">  
+        <fileset  dir="lib">
+          <include name="*.jar"/>
+        </fileset>
+    </path>
+	 
+	 
+	 
+	<target name="init" >
+		
+		 <condition property="remotCMD_exit">  
+			 <!--如果file1所代表的文件与file2所代表的文件相等返回true，否则为false-->  
+			 	<available file="${build}/${dest}" property="remotCMD_exit" /> 
+			 </condition>  
+		 <antcall target="clean"/> 
+		  
+		<mkdir dir="${build}/${dest}"/>
+		<!--mkdir dir="warconf/${dest}/${web}"/ -->
+	</target>
+	
+	<target name="makeProject" depends="init">
+	    <mkdir dir="${build}/${dest}/${conf}"/>
+	    <mkdir dir="${build}/${dest}/${lib}"/>
+	    <!-- 将配置文件拷贝到 conf 文件夹中 -->
+        <copy todir="${build}/${dest}/${conf}">
+           <fileset dir="src">
+              <include name="*.properties" />
+              <include name="*.ini" />
+          </fileset>
+       </copy>	
+       
+       <!-- 将lib 下的jar包拷贝到 lib目录下 -->
+	    <copy todir="${build}/${dest}/${lib}">
+           <fileset dir="lib">
+              <include name="*.jar" />
+          </fileset>
+        </copy>	
+	
+	</target>
+	
+	<!-- 将项目打成jar包 -->
+	<target name="makejar">
+	
+	</target>
+	
+	
+	
+	
+	 <target name="compile" depends="makeProject">
+       <mkdir dir="${build}/classes"/>
+      <javac   srcdir="src" destdir="${build}/classes" encoding="UTF-8">
+          <classpath refid="classpath"/>   
+      </javac>
+    </target>
+ 
+	
+	<target name="runclientServer" depends="compile">
+	
+		  <java fork="true" classname="com.zkr.cmd.MakeSHBAT" classpathref="classpath">
+		     <classpath path="${build}/classes" />
+		     <arg value= "build/remotCMD"/>
+		   </java>
+	
+	</target>
+
+
+    <target name="run" depends="runclientServer">
+        <pathconvert property="mf.classpath" pathsep=" ">
+             <mapper>
+                 <chainedmapper>
+                     <flattenmapper />
+                     <globmapper from="*" to="lib/*" />
+                 </chainedmapper>
+             </mapper>
+             <path refid="classpath" />
+         </pathconvert>
+
+
+    <jar destfile="${build}/${dest}/lib/${remotCMDJAR}" basedir="build/classes">
+               <manifest>
+                  <attribute name="Main-class" value="Main"/>
+                      <attribute name="Class-Path" value="${mf.classpath} "/>
+               </manifest>
+     </jar>
+     
+    </target>
+	
+	
+	
+ 	 
+	
+
+
+	<target name="clean" if="remotCMD_exit">
+		  <delete file="${build}/${dest}" />
+		  <delete file="${build}/lib" />
+		  <delete file="${build}/classes" />
+			<!--delete dir="warconf/${dest}"/ --> 
+	</target>
+</project>
+ 
+ 
